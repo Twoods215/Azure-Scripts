@@ -1,0 +1,32 @@
+######################
+#Azure VM creation
+######################
+
+# Variables
+$resourceGroupName = "<YourResourceGroupName>"
+$vmName = "<YourVMName>"
+$location = "<YourAzureRegion>"
+$adminUsername = "<YourAdminUsername>"
+$adminPassword = ConvertTo-SecureString "<YourAdminPassword>" -AsPlainText -Force
+$vmSize = "Standard_DS1_v2"
+$imagePublisher = "Canonical"
+$imageOffer = "UbuntuServer"
+$imageSKU = "16.04-LTS"
+
+# Create Resource Group (if not already created)
+New-AzResourceGroup -Name $resourceGroupName -Location $location
+
+# Create VM
+New-AzVm `
+  -ResourceGroupName $resourceGroupName `
+  -Name $vmName `
+  -Location $location `
+  -VirtualNetworkName "MyVNet" `
+  -SubnetName "MySubnet" `
+  -SecurityGroupName "MyNSG" `
+  -PublicIpAddressName "MyPublicIP" `
+  -OpenPorts 80,3389 `
+  -ImageName "$imagePublisher:$imageOffer:$imageSKU" `
+  -Size $vmSize `
+  -Credential (New-Object PSCredential $adminUsername, $adminPassword)
+##############################################################################################################
